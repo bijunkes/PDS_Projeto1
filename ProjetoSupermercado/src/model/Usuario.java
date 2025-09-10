@@ -1,9 +1,14 @@
-package supermercado;
+package model;
 
 public class Usuario {
 	private int id;
 	private String nome;
 	private String cpf;
+	
+	public Usuario(String nome, String cpf) {
+		this.nome = nome;
+		this.cpf = cpf;
+	}
 	
 	public Usuario(int id, String nome, String cpf) {
 		this.id = id;

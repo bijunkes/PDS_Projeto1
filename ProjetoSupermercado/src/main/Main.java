@@ -1,4 +1,6 @@
-package supermercado;
+package main;
+
+import controller.Frame;
 
 public class Main {
 

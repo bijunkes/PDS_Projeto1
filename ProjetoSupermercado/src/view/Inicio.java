@@ -1,4 +1,4 @@
-package supermercado;
+package view;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,20 +18,27 @@ import java.awt.CardLayout;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
+
+import controller.Frame;
 import net.miginfocom.swing.MigLayout;
+
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.GroupLayout.Alignment;
 import com.jgoodies.forms.layout.FormSpecs;
 import javax.swing.SpringLayout;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Inicio extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	public Inicio() {
+	public Inicio(Frame frame) {
 		Color corFundo = new Color(0x25, 0x4D, 0x32);
 		Color verdeClaro = new Color(208, 219, 151);
+		
 		setBackground(corFundo);
 		setPreferredSize(new Dimension(900, 600));
 		setLayout(null);
@@ -44,6 +51,11 @@ public class Inicio extends JPanel {
 		add(labelSupermercado);
 		
 		JButton buttonCadastrar = new JButton("CADASTRAR");
+		buttonCadastrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.mostrarCadastro();
+			}
+		});
 		buttonCadastrar.setFont(new Font("Arial", Font.BOLD, 20));
 		buttonCadastrar.setBounds(250, 300, 400, 50);
 		buttonCadastrar.setBackground(verdeClaro);
@@ -53,6 +65,11 @@ public class Inicio extends JPanel {
 		add(buttonCadastrar);
 		
 		JButton buttonEntrar = new JButton("ENTRAR");
+		buttonEntrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.mostrarLogin();
+			}
+		});
 		buttonEntrar.setFont(new Font("Arial", Font.BOLD, 20));
 		buttonEntrar.setBounds(250, 400, 400, 50);
 		buttonEntrar.setBackground(verdeClaro);
@@ -60,5 +77,19 @@ public class Inicio extends JPanel {
 		buttonEntrar.setOpaque(true);
 		buttonEntrar.setBorderPainted(false);
 		add(buttonEntrar);
+		
+		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/logout.png"));
+		JButton buttonLogout = new JButton(icon);
+		buttonLogout.setBounds(820, 530, 38, 40);
+		buttonLogout.setBackground(corFundo);
+		buttonLogout.setForeground(verdeClaro);
+		buttonLogout.setOpaque(true);
+		buttonLogout.setBorderPainted(false);
+		
+		buttonLogout.addActionListener(e -> {
+		    frame.dispose();
+		});
+
+		add(buttonLogout);
 	}
 }

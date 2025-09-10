@@ -1,4 +1,4 @@
-package supermercado;
+package model;
 
 public class ProdutoDAO {
 
