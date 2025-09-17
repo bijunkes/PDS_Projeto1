@@ -19,6 +19,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JRadioButton;
 
+import javax.swing.JFormattedTextField;
+import javax.swing.text.MaskFormatter;
+import java.text.ParseException;
+
 public class Cadastro extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -32,7 +36,7 @@ public class Cadastro extends JPanel {
 		
 		Color corFundo = new Color(0x25, 0x4D, 0x32);
 		Color verdeClaro = new Color(208, 219, 151);
-		Color verdeClaroTransparente = new Color(208, 219, 151, 128);
+		Color verdeClaroTransparente = new Color(122, 148, 101);
 		
 		setBackground(corFundo);
 		setPreferredSize(new Dimension(900, 600));
@@ -46,20 +50,6 @@ public class Cadastro extends JPanel {
 		add(labelCadastro);
 		
 		JButton buttonCadastrar = new JButton("CADASTRAR");
-		buttonCadastrar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String nome = textFieldNome.getText();
-				String cpf = textFieldCpf.getText();
-				
-				boolean ok = controller.cadastrarUsuario(nome, cpf);
-				if (ok) {
-	                System.out.println("Usuário cadastrado com sucesso!");
-	                frame.mostrarInicio();
-	            } else {
-	                System.out.println("Falha no cadastro. Verifique os dados.");
-	            }
-			}
-		});
 		buttonCadastrar.setFont(new Font("Arial", Font.BOLD, 20));
 		buttonCadastrar.setBounds(350, 454, 200, 50);
 		buttonCadastrar.setBackground(verdeClaro);
@@ -71,27 +61,33 @@ public class Cadastro extends JPanel {
 		textFieldNome = new JTextField();
 		textFieldNome.setBorder(new EmptyBorder(10, 10, 10, 10));
 		textFieldNome.setToolTipText("NOME");
-		textFieldNome.setForeground(corFundo);
+		textFieldNome.setForeground(verdeClaro);
 		textFieldNome.setFont(new Font("Arial", Font.BOLD, 16));
 		textFieldNome.setBackground(verdeClaroTransparente);
 		textFieldNome.setBounds(200, 194, 500, 50);
 		add(textFieldNome);
 		textFieldNome.setColumns(10);
 		
-		textFieldCpf = new JTextField();
-		textFieldCpf.setBorder(new EmptyBorder(10, 10, 10, 10));
-		textFieldCpf.setToolTipText("CPF");
-		textFieldCpf.setForeground(corFundo);
-		textFieldCpf.setFont(new Font("Arial", Font.BOLD, 16));
-		textFieldCpf.setBackground(verdeClaroTransparente);
-		textFieldCpf.setColumns(10);
-		textFieldCpf.setBounds(200, 274, 500, 50);
-		add(textFieldCpf);
+		try {
+			MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
+			textFieldCpf = new JFormattedTextField(cpfMask);
+			textFieldCpf.setText("");
+			textFieldCpf.setBorder(new EmptyBorder(10, 10, 10, 10));
+			textFieldCpf.setToolTipText("CPF");
+			textFieldCpf.setForeground(verdeClaro);
+			textFieldCpf.setFont(new Font("Arial", Font.BOLD, 16));
+			textFieldCpf.setBackground(verdeClaroTransparente);
+			textFieldCpf.setColumns(10);
+			textFieldCpf.setBounds(200, 274, 500, 50);
+			add(textFieldCpf);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		
 		JRadioButton radioButtonAdm = new JRadioButton("ADMINISTRADOR");
 		radioButtonAdm.setBorder(new EmptyBorder(10, 10, 10, 10));
 		radioButtonAdm.setBackground(verdeClaroTransparente);
-		radioButtonAdm.setForeground(corFundo); 
+		radioButtonAdm.setForeground(verdeClaro); 
 		radioButtonAdm.setFont(new Font("Arial", Font.BOLD, 16));
 		radioButtonAdm.setBounds(200, 356, 500, 50);
 		add(radioButtonAdm);
@@ -105,9 +101,25 @@ public class Cadastro extends JPanel {
 		buttonVoltar.setBorderPainted(false);
 		
 		buttonVoltar.addActionListener(e -> {
-		    frame.mostrarLogin();
+		    frame.mostrarInicio();
 		});
-
+		
+		buttonCadastrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String nome = textFieldNome.getText();
+				String cpf = textFieldCpf.getText();
+				boolean admin = radioButtonAdm.isSelected();
+				
+				boolean ok = controller.cadastrarUsuario(nome, cpf, admin);
+				if (ok) {
+	                System.out.println("Usuário cadastrado com sucesso!");
+	                frame.mostrarInicio();
+	            } else {
+	                System.out.println("Falha no cadastro. Verifique os dados.");
+	            }
+			}
+		});
+		
 		add(buttonVoltar);
 	}
 }

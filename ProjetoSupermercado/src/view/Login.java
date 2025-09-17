@@ -6,16 +6,20 @@ import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.MaskFormatter;
 
 import controller.CadastroController;
 import controller.Frame;
+import controller.LoginController;
 
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.awt.event.ActionEvent;
 import javax.swing.JRadioButton;
 
@@ -24,13 +28,16 @@ public class Login extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JTextField textFieldNome;
 	private JTextField textFieldCpf;
-	private CadastroController controller;
+	private LoginController controller;
 
+	
 	public Login(Frame frame) {
+		
+		controller = new LoginController();
 		
 		Color corFundo = new Color(0x25, 0x4D, 0x32);
 		Color verdeClaro = new Color(208, 219, 151);
-		Color verdeClaroTransparente = new Color(208, 219, 151, 128);
+		Color verdeClaroTransparente = new Color(122, 148, 101);
 		
 		setBackground(corFundo);
 		setPreferredSize(new Dimension(900, 600));
@@ -49,10 +56,8 @@ public class Login extends JPanel {
 				String nome = textFieldNome.getText();
 				String cpf = textFieldCpf.getText();
 				
-				boolean ok = controller.cadastrarUsuario(nome, cpf);
+				boolean ok = controller.autenticar(nome, cpf);
 				if (ok) {
-	                System.out.println("Usuário cadastrado com sucesso!");
-	                frame.mostrarInicio();
 	            } else {
 	                System.out.println("Falha no cadastro. Verifique os dados.");
 	            }
@@ -69,22 +74,28 @@ public class Login extends JPanel {
 		textFieldNome = new JTextField();
 		textFieldNome.setBorder(new EmptyBorder(10, 10, 10, 10));
 		textFieldNome.setToolTipText("NOME");
-		textFieldNome.setForeground(corFundo);
+		textFieldNome.setForeground(verdeClaro);
 		textFieldNome.setFont(new Font("Arial", Font.BOLD, 16));
 		textFieldNome.setBackground(verdeClaroTransparente);
 		textFieldNome.setBounds(200, 230, 500, 50);
 		add(textFieldNome);
 		textFieldNome.setColumns(10);
 		
-		textFieldCpf = new JTextField();
-		textFieldCpf.setBorder(new EmptyBorder(10, 10, 10, 10));
-		textFieldCpf.setToolTipText("CPF");
-		textFieldCpf.setForeground(corFundo);
-		textFieldCpf.setFont(new Font("Arial", Font.BOLD, 16));
-		textFieldCpf.setBackground(verdeClaroTransparente);
-		textFieldCpf.setColumns(10);
-		textFieldCpf.setBounds(200, 310, 500, 50);
-		add(textFieldCpf);
+		try {
+			MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
+			textFieldCpf = new JFormattedTextField(cpfMask);
+			textFieldCpf.setText("");
+			textFieldCpf.setBorder(new EmptyBorder(10, 10, 10, 10));
+			textFieldCpf.setToolTipText("CPF");
+			textFieldCpf.setForeground(verdeClaro);
+			textFieldCpf.setFont(new Font("Arial", Font.BOLD, 16));
+			textFieldCpf.setBackground(verdeClaroTransparente);
+			textFieldCpf.setColumns(10);
+			textFieldCpf.setBounds(200, 310, 500, 50);
+			add(textFieldCpf);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		
 		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/voltar.png"));
 		JButton buttonVoltar = new JButton(icon);

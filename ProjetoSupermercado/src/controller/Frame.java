@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import view.Cadastro;
+import view.CadastroProdutos;
 import view.Inicio;
 import view.Login;
 
@@ -46,6 +47,13 @@ public class Frame extends JFrame {
 	public void mostrarLogin() {
 		contentPane.removeAll();
 		contentPane.add(new Login(this), BorderLayout.CENTER);
+		contentPane.revalidate();
+		contentPane.repaint();
+	}
+	
+	public void mostrarCadastroProdutos() {
+		contentPane.removeAll();
+		contentPane.add(new CadastroProdutos(this), BorderLayout.CENTER);
 		contentPane.revalidate();
 		contentPane.repaint();
 	}
