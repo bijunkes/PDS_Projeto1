@@ -23,14 +23,14 @@ import javax.swing.JFormattedTextField;
 import javax.swing.text.MaskFormatter;
 import java.text.ParseException;
 
-public class Cadastro extends JPanel {
+public class Compras extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JTextField textFieldNome;
 	private JTextField textFieldCpf;
 	private CadastroController controller;
 
-	public Cadastro(Frame frame) {
+	public Compras(Frame frame) {
 		
 		controller = new CadastroController();
 		
@@ -121,21 +121,5 @@ public class Cadastro extends JPanel {
 		});
 		
 		add(buttonVoltar);
-		
-		JLabel lblNome = new JLabel("NOME");
-		lblNome.setVerticalAlignment(SwingConstants.BOTTOM);
-		lblNome.setHorizontalAlignment(SwingConstants.LEFT);
-		lblNome.setForeground(new Color(208, 219, 151));
-		lblNome.setFont(new Font("Arial", Font.BOLD, 16));
-		lblNome.setBounds(200, 165, 59, 26);
-		add(lblNome);
-		
-		JLabel lblCpf = new JLabel("CPF");
-		lblCpf.setVerticalAlignment(SwingConstants.BOTTOM);
-		lblCpf.setHorizontalAlignment(SwingConstants.LEFT);
-		lblCpf.setForeground(new Color(208, 219, 151));
-		lblCpf.setFont(new Font("Arial", Font.BOLD, 16));
-		lblCpf.setBounds(200, 245, 59, 26);
-		add(lblCpf);
 	}
 }

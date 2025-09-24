@@ -38,7 +38,7 @@ public class UsuarioDAO {
     }
 	
 	public Usuario logarUsuario(String nome, String cpf) {
-		String sql = "SELECT id, nome, cpf FROM usuarios WHERE nome = ? AND cpf = ?";
+		String sql = "SELECT id, nome, cpf, admin FROM usuarios WHERE nome = ? AND cpf = ?";
 		
 		try (Connection conexao = BancoDeDados.conectar();
 	        	PreparedStatement pstm = conexao.prepareStatement(sql)) {
@@ -60,7 +60,7 @@ public class UsuarioDAO {
 	
 	public List<Usuario> listarUsuarios() {
 		List<Usuario> usuarios = new ArrayList<>();
-		String sql = "SELECT id, nome, cpf FROM usuarios";
+		String sql = "SELECT id, nome, cpf, admin FROM usuarios";
 		
 		try (Connection conexao = BancoDeDados.conectar();
 				PreparedStatement pstm = conexao.prepareStatement(sql);

@@ -16,6 +16,8 @@ import javax.swing.text.MaskFormatter;
 import controller.CadastroController;
 import controller.Frame;
 import controller.LoginController;
+import model.Usuario;
+import model.UsuarioDAO;
 
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
@@ -51,18 +53,8 @@ public class Login extends JPanel {
 		add(labelLogin);
 		
 		JButton buttonEntrar = new JButton("ENTRAR");
-		buttonEntrar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String nome = textFieldNome.getText();
-				String cpf = textFieldCpf.getText();
-				
-				boolean ok = controller.autenticar(nome, cpf);
-				if (ok) {
-	            } else {
-	                System.out.println("Falha no cadastro. Verifique os dados.");
-	            }
-			}
-		});
+		
+
 		buttonEntrar.setFont(new Font("Arial", Font.BOLD, 20));
 		buttonEntrar.setBounds(350, 430, 200, 50);
 		buttonEntrar.setBackground(verdeClaro);
@@ -108,7 +100,47 @@ public class Login extends JPanel {
 		buttonVoltar.addActionListener(e -> {
 		    frame.mostrarInicio();
 		});
+		
+		buttonEntrar.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        String nome = textFieldNome.getText().trim();
+		        String cpf = textFieldCpf.getText().trim();
+
+		        UsuarioDAO dao = new UsuarioDAO();
+		        Usuario usuario = dao.logarUsuario(nome, cpf);
+
+		        if (usuario != null) {
+		            if (usuario.isAdmin()) {
+		                frame.mostrarCadastroProdutos();
+		            } else {
+		                frame.mostrarCompras();
+		            }
+		        } else {
+		            javax.swing.JOptionPane.showMessageDialog(Login.this,
+		                "Usuário ou CPF inválido.",
+		                "Erro de Login",
+		                javax.swing.JOptionPane.ERROR_MESSAGE);
+		        }
+		    }
+		});
+
 
 		add(buttonVoltar);
+		
+		JLabel lblNome = new JLabel("NOME");
+		lblNome.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblNome.setHorizontalAlignment(SwingConstants.LEFT);
+		lblNome.setForeground(new Color(208, 219, 151));
+		lblNome.setFont(new Font("Arial", Font.BOLD, 16));
+		lblNome.setBounds(200, 208, 108, 19);
+		add(lblNome);
+		
+		JLabel lblCpf = new JLabel("CPF");
+		lblCpf.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblCpf.setHorizontalAlignment(SwingConstants.LEFT);
+		lblCpf.setForeground(new Color(208, 219, 151));
+		lblCpf.setFont(new Font("Arial", Font.BOLD, 16));
+		lblCpf.setBounds(200, 290, 108, 19);
+		add(lblCpf);
 	}
 }

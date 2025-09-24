@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 
 import view.Cadastro;
 import view.CadastroProdutos;
+import view.Compras;
 import view.Inicio;
 import view.Login;
 
@@ -58,4 +59,12 @@ public class Frame extends JFrame {
 		contentPane.repaint();
 	}
 
+	public void mostrarCompras() {
+		contentPane.removeAll();
+		contentPane.add(new Compras(this), BorderLayout.CENTER);
+		contentPane.revalidate();
+		contentPane.repaint();
+	}
+
+	
 }

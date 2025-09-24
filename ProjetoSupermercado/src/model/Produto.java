@@ -4,11 +4,13 @@ public class Produto {
 	private int id;
 	private String produto;
 	private int qtde;
+	private double preco;
 	
-	public Produto(int id, String produto, int qtde) {
-		this.id = id;
-		this.produto = produto;
-		this.qtde = qtde;
+	public Produto(int id, String produto, double preco, int qtde) {
+	    this.id = id;
+	    this.produto = produto;
+	    this.preco = preco;
+	    this.qtde = qtde;
 	}
 	
 	public int getId() {
@@ -33,6 +35,14 @@ public class Produto {
 
 	public void setQtde(int qtde) {
 		this.qtde = qtde;
+	}
+	
+	public double getPreco() {
+	    return preco;
+	}
+
+	public void setPreco(double preco) {
+	    this.preco = preco;
 	}
 
 }
