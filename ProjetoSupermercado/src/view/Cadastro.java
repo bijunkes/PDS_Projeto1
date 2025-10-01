@@ -61,7 +61,7 @@ public class Cadastro extends JPanel {
 		textFieldNome = new JTextField();
 		textFieldNome.setBorder(new EmptyBorder(10, 10, 10, 10));
 		textFieldNome.setToolTipText("NOME");
-		textFieldNome.setForeground(verdeClaro);
+		textFieldNome.setForeground(corFundo);
 		textFieldNome.setFont(new Font("Arial", Font.BOLD, 16));
 		textFieldNome.setBackground(verdeClaroTransparente);
 		textFieldNome.setBounds(200, 194, 500, 50);
@@ -74,7 +74,7 @@ public class Cadastro extends JPanel {
 			textFieldCpf.setText("");
 			textFieldCpf.setBorder(new EmptyBorder(10, 10, 10, 10));
 			textFieldCpf.setToolTipText("CPF");
-			textFieldCpf.setForeground(verdeClaro);
+			textFieldCpf.setForeground(corFundo);
 			textFieldCpf.setFont(new Font("Arial", Font.BOLD, 16));
 			textFieldCpf.setBackground(verdeClaroTransparente);
 			textFieldCpf.setColumns(10);
@@ -87,7 +87,7 @@ public class Cadastro extends JPanel {
 		JRadioButton radioButtonAdm = new JRadioButton("ADMINISTRADOR");
 		radioButtonAdm.setBorder(new EmptyBorder(10, 10, 10, 10));
 		radioButtonAdm.setBackground(verdeClaroTransparente);
-		radioButtonAdm.setForeground(verdeClaro); 
+		radioButtonAdm.setForeground(corFundo); 
 		radioButtonAdm.setFont(new Font("Arial", Font.BOLD, 16));
 		radioButtonAdm.setBounds(200, 356, 500, 50);
 		add(radioButtonAdm);

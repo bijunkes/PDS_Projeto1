@@ -6,8 +6,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import model.Usuario;
 import view.Cadastro;
 import view.CadastroProdutos;
+import view.Carrinho;
 import view.Compras;
 import view.Inicio;
 import view.Login;
@@ -16,6 +18,16 @@ public class Frame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	
+	private Usuario usuarioLogado;
+
+	public void setUsuarioLogado(Usuario usuario) {
+	    this.usuarioLogado = usuario;
+	}
+
+	public Usuario getUsuarioLogado() {
+	    return this.usuarioLogado;
+	}
 	
 	public Frame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -58,13 +70,22 @@ public class Frame extends JFrame {
 		contentPane.revalidate();
 		contentPane.repaint();
 	}
+	
+	private Compras comprasPanel;
 
 	public void mostrarCompras() {
-		contentPane.removeAll();
-		contentPane.add(new Compras(this), BorderLayout.CENTER);
-		contentPane.revalidate();
-		contentPane.repaint();
+	    comprasPanel = new Compras(this);
+	    contentPane.removeAll();
+	    contentPane.add(comprasPanel);
+	    contentPane.revalidate();
+	    contentPane.repaint();
 	}
 
+	public void mostrarCarrinho() {
+	    contentPane.removeAll();
+	    contentPane.add(new Carrinho(this, comprasPanel));
+	    contentPane.revalidate();
+	    contentPane.repaint();
+	}
 	
 }

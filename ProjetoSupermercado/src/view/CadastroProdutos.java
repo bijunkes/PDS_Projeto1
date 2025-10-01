@@ -12,20 +12,17 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import controller.CadastroController;
 import controller.Frame;
+import controller.ProdutoController;
 import model.Produto;
-import model.ProdutoDAO;
-import model.Usuario;
 
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.JRadioButton;
 
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.text.MaskFormatter;
 import java.text.ParseException;
@@ -35,38 +32,34 @@ public class CadastroProdutos extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JTextField textFieldProduto;
-	private CadastroController controller;
 	private JTextField textFieldPreco;
 	private JTextField textFieldQtde;
 	private JTable table;
 	private java.util.List<Produto> listaProdutos = new java.util.ArrayList<>();
 	
+	private ProdutoController controller;
+	
 	private void atualizarTabela() {
-	    ProdutoDAO dao = new ProdutoDAO();
-	    java.util.List<Produto> produtos = dao.listarProdutos();
+        listaProdutos.clear();
+        listaProdutos.addAll(controller.listarProdutos());
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Produto");
+        model.addColumn("Preço");
+        model.addColumn("Qtde");
 
-	    listaProdutos.clear();
-	    listaProdutos.addAll(produtos);
-
-	    DefaultTableModel model = new DefaultTableModel();
-	    model.addColumn("Produto");
-	    model.addColumn("Preço");
-	    model.addColumn("Qtde");
-
-	    for (Produto p : produtos) {
-	        model.addRow(new Object[] {
-	            p.getProduto(),
-	            String.format("R$ %.2f", p.getPreco()),
-	            p.getQtde()
-	        });
-	    }
-
-	    table.setModel(model);
-	}
+        for (Produto p : listaProdutos) {
+            model.addRow(new Object[]{
+                    p.getProduto(),
+                    String.format("R$ %.2f", p.getPreco()),
+                    p.getQtde()
+            });
+        }
+        table.setModel(model);
+    }
 
 	public CadastroProdutos(Frame frame) {
 		
-		controller = new CadastroController();
+		controller = new ProdutoController();
 		
 		Color corFundo = new Color(0x25, 0x4D, 0x32);
 		Color verdeClaro = new Color(208, 219, 151);
@@ -78,7 +71,7 @@ public class CadastroProdutos extends JPanel {
 		
 		JLabel labelCadastro = new JLabel("CADASTRO");
 		labelCadastro.setVerticalAlignment(SwingConstants.TOP);
-		labelCadastro.setBounds(140, 85, 220, 29);
+		labelCadastro.setBounds(95, 85, 300, 29);
 		labelCadastro.setForeground(verdeClaro);
 		labelCadastro.setFont(new Font("Arial", Font.BOLD, 30));
 		labelCadastro.setHorizontalAlignment(SwingConstants.CENTER);
@@ -96,7 +89,7 @@ public class CadastroProdutos extends JPanel {
 		textFieldProduto = new JTextField();
 		textFieldProduto.setBorder(new EmptyBorder(10, 10, 10, 10));
 		textFieldProduto.setToolTipText("PRODUTO");
-		textFieldProduto.setForeground(verdeClaro);
+		textFieldProduto.setForeground(corFundo);
 		textFieldProduto.setFont(new Font("Arial", Font.BOLD, 16));
 		textFieldProduto.setBackground(verdeClaroTransparente);
 		textFieldProduto.setBounds(95, 200, 300, 50);
@@ -125,7 +118,7 @@ public class CadastroProdutos extends JPanel {
 		
 		textFieldPreco = new JTextField();
 		textFieldPreco.setToolTipText("PREÇO");
-		textFieldPreco.setForeground(new Color(208, 219, 151));
+		textFieldPreco.setForeground(corFundo);
 		textFieldPreco.setFont(new Font("Arial", Font.BOLD, 16));
 		textFieldPreco.setColumns(10);
 		textFieldPreco.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -138,12 +131,12 @@ public class CadastroProdutos extends JPanel {
 		labelDeProdutos.setHorizontalAlignment(SwingConstants.CENTER);
 		labelDeProdutos.setForeground(new Color(208, 219, 151));
 		labelDeProdutos.setFont(new Font("Arial", Font.BOLD, 30));
-		labelDeProdutos.setBounds(140, 119, 220, 29);
+		labelDeProdutos.setBounds(95, 113, 300, 29);
 		add(labelDeProdutos);
 		
 		textFieldQtde = new JTextField();
 		textFieldQtde.setToolTipText("QUANTIDADE");
-		textFieldQtde.setForeground(new Color(208, 219, 151));
+		textFieldQtde.setForeground(corFundo);
 		textFieldQtde.setFont(new Font("Arial", Font.BOLD, 16));
 		textFieldQtde.setColumns(10);
 		textFieldQtde.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -153,9 +146,13 @@ public class CadastroProdutos extends JPanel {
 		
 		table = new JTable();
 		table.setFont(new Font("Arial", Font.BOLD, 18));
-		table.setForeground(verdeClaro);
+		table.setForeground(corFundo);
 		table.setBackground(verdeClaroTransparente);
+		table.setRowHeight(30);
 		table.setBounds(500, 85, 350, 430);
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		table.setDefaultRenderer(Object.class, centerRenderer);
 		add(table);
 		
 		JButton buttonEditar = new JButton("EDITAR");
@@ -185,7 +182,7 @@ public class CadastroProdutos extends JPanel {
 		lblProduto.setHorizontalAlignment(SwingConstants.LEFT);
 		lblProduto.setForeground(new Color(208, 219, 151));
 		lblProduto.setFont(new Font("Arial", Font.BOLD, 16));
-		lblProduto.setBounds(95, 165, 220, 29);
+		lblProduto.setBounds(95, 170, 220, 29);
 		add(lblProduto);
 		
 		JLabel labelCadastro_1_1 = new JLabel("PREÇO (R$)");
@@ -204,67 +201,84 @@ public class CadastroProdutos extends JPanel {
 		labelCadastro_1_1_1.setBounds(95, 345, 220, 29);
 		add(labelCadastro_1_1_1);
 		
-		buttonCadastrar.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        String nome = textFieldProduto.getText().trim();
-		        String precoStr = textFieldPreco.getText().trim().replace(",", ".");
-		        String qtdeStr = textFieldQtde.getText().trim();
-
-		        if (nome.isEmpty() || precoStr.isEmpty() || qtdeStr.isEmpty()) {
-		            javax.swing.JOptionPane.showMessageDialog(null, "Preencha todos os campos");
-		            return;
-		        }
-
-		        try {
-		            double preco = Double.parseDouble(precoStr);
-		            int qtde = Integer.parseInt(qtdeStr);
-
-		            Produto produto = new Produto(0, nome, preco, qtde);  // id = 0 pois será gerado no banco
-		            ProdutoDAO dao = new ProdutoDAO();
-
-		            if (dao.cadastrarProduto(produto)) {
-		                javax.swing.JOptionPane.showMessageDialog(null, "Produto cadastrado!");
-		                atualizarTabela();
-		                textFieldProduto.setText("");
-		                textFieldPreco.setText("");
-		                textFieldQtde.setText("");
-		            } else {
-		                javax.swing.JOptionPane.showMessageDialog(null, "Erro ao cadastrar.");
-		            }
-
-
-		        } catch (NumberFormatException ex) {
-		            javax.swing.JOptionPane.showMessageDialog(null, "Preço ou quantidade inválidos.");
-		        }
-		    }
-		});
+		JLabel lblProdutoTabela = new JLabel("PRODUTO");
+		lblProdutoTabela.setForeground(corFundo);
+		lblProdutoTabela.setBackground(verdeClaro);
+		lblProdutoTabela.setOpaque(true);
+		lblProdutoTabela.setHorizontalAlignment(SwingConstants.CENTER);
+		lblProdutoTabela.setFont(new Font("Arial", Font.BOLD, 18));
+		lblProdutoTabela.setBounds(500, 55, 120, 30);
+		add(lblProdutoTabela);
 		
-		buttonExcluir.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        int selectedRow = table.getSelectedRow();
+		JLabel lblQtdeTabela = new JLabel("QTDE");
+		lblQtdeTabela.setOpaque(true);
+		lblQtdeTabela.setHorizontalAlignment(SwingConstants.CENTER);
+		lblQtdeTabela.setForeground(new Color(37, 77, 50));
+		lblQtdeTabela.setFont(new Font("Arial", Font.BOLD, 18));
+		lblQtdeTabela.setBackground(new Color(208, 219, 151));
+		lblQtdeTabela.setBounds(730, 55, 120, 30);
+		add(lblQtdeTabela);
+		
+		JLabel lblPrecoTabela = new JLabel("PREÇO");
+		lblPrecoTabela.setOpaque(true);
+		lblPrecoTabela.setHorizontalAlignment(SwingConstants.CENTER);
+		lblPrecoTabela.setForeground(new Color(37, 77, 50));
+		lblPrecoTabela.setFont(new Font("Arial", Font.BOLD, 18));
+		lblPrecoTabela.setBackground(new Color(208, 219, 151));
+		lblPrecoTabela.setBounds(614, 55, 120, 30);
+		add(lblPrecoTabela);
+		
+		buttonCadastrar.addActionListener(e -> {
+            String nome = textFieldProduto.getText().trim();
+            String precoStr = textFieldPreco.getText().trim().replace(",", ".");
+            String qtdeStr = textFieldQtde.getText().trim();
 
-		        if (selectedRow == -1) {
-		            javax.swing.JOptionPane.showMessageDialog(null, "Selecione um produto para excluir.");
-		            return;
-		        }
+            if (nome.isEmpty() || precoStr.isEmpty() || qtdeStr.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Preencha todos os campos");
+                return;
+            }
 
-		        Produto produtoSelecionado = listaProdutos.get(selectedRow);
+            try {
+                double preco = Double.parseDouble(precoStr);
+                int qtde = Integer.parseInt(qtdeStr);
 
-		        int confirm = javax.swing.JOptionPane.showConfirmDialog(null, 
-		            "Deseja realmente excluir o produto \"" + produtoSelecionado.getProduto() + "\"?",
-		            "Confirmação", javax.swing.JOptionPane.YES_NO_OPTION);
+                if (controller.cadastrarProduto(nome, preco, qtde)) {
+                    JOptionPane.showMessageDialog(null, "Produto cadastrado!");
+                    atualizarTabela();
+                    textFieldProduto.setText("");
+                    textFieldPreco.setText("");
+                    textFieldQtde.setText("");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Erro ao cadastrar.");
+                }
 
-		        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
-		            ProdutoDAO dao = new ProdutoDAO();
-		            if (dao.excluirProduto(produtoSelecionado.getId())) {
-		                javax.swing.JOptionPane.showMessageDialog(null, "Produto excluído com sucesso!");
-		                atualizarTabela();
-		            } else {
-		                javax.swing.JOptionPane.showMessageDialog(null, "Erro ao excluir produto.");
-		            }
-		        }
-		    }
-		});
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Preço ou quantidade inválidos.");
+            }
+        });
+		
+		buttonExcluir.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(null, "Selecione um produto para excluir.");
+                return;
+            }
+
+            Produto produtoSelecionado = listaProdutos.get(selectedRow);
+
+            int confirm = JOptionPane.showConfirmDialog(null,
+                    "Deseja realmente excluir o produto \"" + produtoSelecionado.getProduto() + "\"?",
+                    "Confirmação", JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                if (controller.excluirProduto(produtoSelecionado.getId())) {
+                    JOptionPane.showMessageDialog(null, "Produto excluído com sucesso!");
+                    atualizarTabela();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Erro ao excluir produto.");
+                }
+            }
+        });
 		
 		buttonEditar.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
@@ -288,8 +302,6 @@ public class CadastroProdutos extends JPanel {
 		    }
 		});
 
-		
 		atualizarTabela();
-
 	}
 }

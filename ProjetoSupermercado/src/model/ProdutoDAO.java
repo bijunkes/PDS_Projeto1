@@ -83,6 +83,45 @@ public class ProdutoDAO {
             return false;
         }
     }
+    
+    public Produto buscarPorId(int id) {
+        String sql = "SELECT * FROM produtos WHERE id = ?";
+        try (Connection conexao = BancoDeDados.conectar();
+             PreparedStatement pstm = conexao.prepareStatement(sql)) {
 
+            pstm.setInt(1, id);
+            ResultSet rs = pstm.executeQuery();
+
+            if (rs.next()) {
+                return new Produto(
+                    rs.getInt("id"),
+                    rs.getString("nome"), 
+                    rs.getDouble("preco"),
+                    rs.getInt("qtde")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean atualizarEstoque(int idProduto, int novaQtde) {
+        String sql = "UPDATE produtos SET qtde = ? WHERE id = ?";
+        try (Connection conexao = BancoDeDados.conectar();
+             PreparedStatement pstm = conexao.prepareStatement(sql)) {
+
+            pstm.setInt(1, novaQtde);
+            pstm.setInt(2, idProduto);
+
+            int linhasAfetadas = pstm.executeUpdate();
+
+            return linhasAfetadas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 }

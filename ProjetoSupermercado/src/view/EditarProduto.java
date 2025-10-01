@@ -1,12 +1,14 @@
 package view;
 
 import javax.swing.*;
+
+import controller.ProdutoController;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import model.Produto;
-import model.ProdutoDAO;
 
 public class EditarProduto extends JDialog {
 
@@ -16,6 +18,8 @@ public class EditarProduto extends JDialog {
 
     private Produto produto;
     private Runnable callbackAtualizarTabela;
+    
+    private ProdutoController controller;
 
     public EditarProduto(JFrame parent, Produto produtoSelecionado, Runnable callbackAtualizar) {
         super(parent, "Editar Produto", true);
@@ -29,19 +33,30 @@ public class EditarProduto extends JDialog {
         this.callbackAtualizarTabela = callbackAtualizar;
         setSize(500, 400);
         setLocationRelativeTo(parent);
+        
+        Font novaFonte = new Font("Arial", Font.BOLD, 18); 
 
         campoNome = new JTextField(produto.getProduto());
-        campoNome.setForeground(verdeClaro);
+        campoNome.setFont(novaFonte);
+        campoNome.setForeground(corFundo);
         campoNome.setBackground(verdeClaroTransparente);
         campoNome.setBounds(100, 110, 300, 40);
+        campoNome.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        
         campoPreco = new JTextField(String.valueOf(produto.getPreco()));
-        campoPreco.setForeground(verdeClaro);
+        campoPreco.setFont(novaFonte);
+        campoPreco.setForeground(corFundo);
         campoPreco.setBackground(verdeClaroTransparente);
         campoPreco.setBounds(100, 180, 300, 40);
+        campoPreco.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        
         campoQtde = new JTextField(String.valueOf(produto.getQtde()));
-        campoQtde.setForeground(verdeClaro);
+        campoQtde.setFont(novaFonte);
+        campoQtde.setForeground(corFundo);
         campoQtde.setBackground(verdeClaroTransparente);
         campoQtde.setBounds(100, 250, 300, 40);
+        campoQtde.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        
         getContentPane().setLayout(null);
         getContentPane().add(campoNome);
         getContentPane().add(campoPreco);
@@ -112,14 +127,14 @@ public class EditarProduto extends JDialog {
             produto.setPreco(preco);
             produto.setQtde(qtde);
 
-            ProdutoDAO dao = new ProdutoDAO();
-            if (dao.atualizarProduto(produto)) {
+            if (controller.atualizarProduto(produto)) {
                 JOptionPane.showMessageDialog(this, "Produto atualizado!");
-                callbackAtualizarTabela.run(); // Atualiza a tabela no painel principal
+                callbackAtualizarTabela.run();
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Erro ao atualizar produto.");
             }
+
 
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Preço ou quantidade inválidos.");

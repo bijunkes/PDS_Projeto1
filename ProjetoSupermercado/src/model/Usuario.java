@@ -51,6 +51,5 @@ public class Usuario {
     public void setAdmin(boolean admin) {
         this.admin = admin;
     }
-    
-
+  
 }
