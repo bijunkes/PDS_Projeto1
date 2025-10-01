@@ -21,8 +21,12 @@ public class EditarProduto extends JDialog {
     
     private ProdutoController controller;
 
-    public EditarProduto(JFrame parent, Produto produtoSelecionado, Runnable callbackAtualizar) {
-        super(parent, "Editar Produto", true);
+
+    public EditarProduto(JFrame parent, Produto produtoSelecionado, Runnable callbackAtualizar, ProdutoController controller) {
+    	super(parent, "Editar Produto", true);
+        this.controller = controller;
+        this.produto = produtoSelecionado;
+        this.callbackAtualizarTabela = callbackAtualizar;
         
         Color corFundo = new Color(0x25, 0x4D, 0x32);
 		Color verdeClaro = new Color(208, 219, 151);

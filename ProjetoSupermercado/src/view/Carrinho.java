@@ -116,7 +116,7 @@ public class Carrinho extends JPanel {
 		
 		add(buttonVoltar);
 		
-		JLabel lblCarrinho = new JLabel("CATÁLOGO");
+		JLabel lblCarrinho = new JLabel("CARRINHO");
 		lblCarrinho.setVerticalAlignment(SwingConstants.TOP);
 		lblCarrinho.setHorizontalAlignment(SwingConstants.CENTER);
 		lblCarrinho.setForeground(verdeClaro);

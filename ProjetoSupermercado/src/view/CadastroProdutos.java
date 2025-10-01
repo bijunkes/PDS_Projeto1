@@ -296,7 +296,7 @@ public class CadastroProdutos extends JPanel {
 		                ? (JFrame) SwingUtilities.getWindowAncestor(CadastroProdutos.this)
 		                : null,
 		            produtoSelecionado,
-		            () -> atualizarTabela()
+		            () -> atualizarTabela(), controller
 		        );
 		        dialog.setVisible(true);
 		    }

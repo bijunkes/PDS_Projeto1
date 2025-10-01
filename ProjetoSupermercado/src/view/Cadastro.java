@@ -7,6 +7,7 @@ import java.awt.Font;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -112,11 +113,21 @@ public class Cadastro extends JPanel {
 				
 				boolean ok = controller.cadastrarUsuario(nome, cpf, admin);
 				if (ok) {
-	                System.out.println("Usuário cadastrado com sucesso!");
-	                frame.mostrarInicio();
-	            } else {
-	                System.out.println("Falha no cadastro. Verifique os dados.");
-	            }
+				    JOptionPane.showMessageDialog(
+				        Cadastro.this, 
+				        "Usuário cadastrado com sucesso.", 
+				        "Sucesso", 
+				        JOptionPane.INFORMATION_MESSAGE
+				    );
+				    frame.mostrarInicio();
+				} else {
+				    JOptionPane.showMessageDialog(
+				        Cadastro.this, 
+				        "Falha no cadastro. Verifique os dados.", 
+				        "Erro", 
+				        JOptionPane.ERROR_MESSAGE
+				    );
+				}
 			}
 		});
 		
