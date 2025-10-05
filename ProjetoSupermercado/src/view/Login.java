@@ -28,9 +28,11 @@ public class Login extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JTextField textFieldNome;
 	private JTextField textFieldCpf;
-
+	private LoginController controller;
 	
 	public Login(Frame frame) {
+		
+		controller = new LoginController();
 		
 		Color corFundo = new Color(0x25, 0x4D, 0x32);
 		Color verdeClaro = new Color(208, 219, 151);
@@ -47,16 +49,13 @@ public class Login extends JPanel {
 		labelLogin.setHorizontalAlignment(SwingConstants.CENTER);
 		add(labelLogin);
 		
-		JButton buttonEntrar = new JButton("ENTRAR");
-		
-
-		buttonEntrar.setFont(new Font("Arial", Font.BOLD, 20));
-		buttonEntrar.setBounds(350, 430, 200, 50);
-		buttonEntrar.setBackground(verdeClaro);
-		buttonEntrar.setForeground(corFundo); 
-		buttonEntrar.setOpaque(true);
-		buttonEntrar.setBorderPainted(false);
-		add(buttonEntrar);
+		JLabel lblNome = new JLabel("NOME");
+		lblNome.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblNome.setHorizontalAlignment(SwingConstants.LEFT);
+		lblNome.setForeground(new Color(208, 219, 151));
+		lblNome.setFont(new Font("Arial", Font.BOLD, 16));
+		lblNome.setBounds(200, 208, 108, 19);
+		add(lblNome);
 		
 		textFieldNome = new JTextField();
 		textFieldNome.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -67,6 +66,14 @@ public class Login extends JPanel {
 		textFieldNome.setBounds(200, 230, 500, 50);
 		add(textFieldNome);
 		textFieldNome.setColumns(10);
+		
+		JLabel lblCpf = new JLabel("CPF");
+		lblCpf.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblCpf.setHorizontalAlignment(SwingConstants.LEFT);
+		lblCpf.setForeground(new Color(208, 219, 151));
+		lblCpf.setFont(new Font("Arial", Font.BOLD, 16));
+		lblCpf.setBounds(200, 290, 108, 19);
+		add(lblCpf);
 		
 		try {
 			MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
@@ -84,6 +91,41 @@ public class Login extends JPanel {
 			e.printStackTrace();
 		}
 		
+		JButton buttonEntrar = new JButton("ENTRAR");
+		buttonEntrar.setFont(new Font("Arial", Font.BOLD, 20));
+		buttonEntrar.setBounds(350, 430, 200, 50);
+		buttonEntrar.setBackground(verdeClaro);
+		buttonEntrar.setForeground(corFundo); 
+		buttonEntrar.setOpaque(true);
+		buttonEntrar.setBorderPainted(false);
+		buttonEntrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+		        String nome = textFieldNome.getText().trim();
+		        String cpf = textFieldCpf.getText().trim();
+
+		        if (nome.isEmpty() || cpf.isEmpty()) {
+		            JOptionPane.showMessageDialog(Login.this, "Preencha todos os campos!");
+		            return;
+		        }
+		        
+		        Usuario usuario = controller.logarUsuario(nome, cpf);
+
+		        if (usuario != null) {
+		            frame.setUsuarioLogado(usuario);
+		            
+		            if (usuario.isAdmin()) {
+		                frame.mostrarCadastroProdutos();
+		            } else {
+		                frame.mostrarCompras();
+		            }
+		        } else {
+		            JOptionPane.showMessageDialog(Login.this, "Nome ou CPF inválido.");
+		        }
+
+		    }
+		});
+		add(buttonEntrar);
+		
 		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/voltar.png"));
 		JButton buttonVoltar = new JButton(icon);
 		buttonVoltar.setBounds(820, 530, 38, 40);
@@ -95,44 +137,6 @@ public class Login extends JPanel {
 		buttonVoltar.addActionListener(e -> {
 		    frame.mostrarInicio();
 		});
-		
-		buttonEntrar.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        String nome = textFieldNome.getText().trim();
-		        String cpf = textFieldCpf.getText().trim();
-
-		        LoginController controller = new LoginController();
-		        Usuario usuario = controller.autenticar(nome, cpf);
-
-		        if (usuario != null) {
-		            frame.setUsuarioLogado(usuario);
-		            if (usuario.isAdmin()) {
-		                frame.mostrarCadastroProdutos();
-		            } else {
-		                frame.mostrarCompras();
-		            }
-		        } else {
-		            JOptionPane.showMessageDialog(Login.this, "Usuário ou CPF inválido.");
-		        }
-		    }
-		});
-
 		add(buttonVoltar);
-		
-		JLabel lblNome = new JLabel("NOME");
-		lblNome.setVerticalAlignment(SwingConstants.BOTTOM);
-		lblNome.setHorizontalAlignment(SwingConstants.LEFT);
-		lblNome.setForeground(new Color(208, 219, 151));
-		lblNome.setFont(new Font("Arial", Font.BOLD, 16));
-		lblNome.setBounds(200, 208, 108, 19);
-		add(lblNome);
-		
-		JLabel lblCpf = new JLabel("CPF");
-		lblCpf.setVerticalAlignment(SwingConstants.BOTTOM);
-		lblCpf.setHorizontalAlignment(SwingConstants.LEFT);
-		lblCpf.setForeground(new Color(208, 219, 151));
-		lblCpf.setFont(new Font("Arial", Font.BOLD, 16));
-		lblCpf.setBounds(200, 290, 108, 19);
-		add(lblCpf);
 	}
 }

@@ -1,8 +1,6 @@
 package model;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import db.BancoDeDados;
 
@@ -38,7 +36,7 @@ public class UsuarioDAO {
     }
 	
 	public Usuario logarUsuario(String nome, String cpf) {
-		String sql = "SELECT id, nome, cpf, admin FROM usuarios WHERE nome = ? AND cpf = ?";
+		String sql = "SELECT * FROM usuarios WHERE nome = ? AND cpf = ?";
 		
 		try (Connection conexao = BancoDeDados.conectar();
 	        	PreparedStatement pstm = conexao.prepareStatement(sql)) {
@@ -56,25 +54,6 @@ public class UsuarioDAO {
 	        e.printStackTrace();
 	   }
 	   return null;
-	}
-	
-	public List<Usuario> listarUsuarios() {
-		List<Usuario> usuarios = new ArrayList<>();
-		String sql = "SELECT id, nome, cpf, admin FROM usuarios";
-		
-		try (Connection conexao = BancoDeDados.conectar();
-				PreparedStatement pstm = conexao.prepareStatement(sql);
-				ResultSet rs = pstm.executeQuery()) {
-				
-				while (rs.next()) {
-					Usuario u = new Usuario(rs.getInt("id"), rs.getString("nome"), rs.getString("cpf"), rs.getBoolean("admin"));
-					usuarios.add(u);
-				}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return usuarios;
 	}
 
 }

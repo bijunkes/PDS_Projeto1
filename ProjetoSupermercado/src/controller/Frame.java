@@ -26,7 +26,7 @@ public class Frame extends JFrame {
 	}
 
 	public Usuario getUsuarioLogado() {
-	    return this.usuarioLogado;
+	    return usuarioLogado;
 	}
 	
 	public Frame() {
@@ -70,22 +70,19 @@ public class Frame extends JFrame {
 		contentPane.revalidate();
 		contentPane.repaint();
 	}
-	
-	private Compras comprasPanel;
 
 	public void mostrarCompras() {
-	    comprasPanel = new Compras(this);
-	    contentPane.removeAll();
-	    contentPane.add(comprasPanel);
-	    contentPane.revalidate();
-	    contentPane.repaint();
+		contentPane.removeAll();
+		contentPane.add(new Compras(this), BorderLayout.CENTER);
+		contentPane.revalidate();
+		contentPane.repaint();
 	}
 
 	public void mostrarCarrinho() {
-	    contentPane.removeAll();
-	    contentPane.add(new Carrinho(this, comprasPanel));
-	    contentPane.revalidate();
-	    contentPane.repaint();
+		contentPane.removeAll();
+		contentPane.add(new Carrinho(this), BorderLayout.CENTER);
+		contentPane.revalidate();
+		contentPane.repaint();
 	}
 	
 }

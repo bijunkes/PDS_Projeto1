@@ -3,6 +3,9 @@ package view;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -10,18 +13,19 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import controller.CarrinhoController;
 import controller.Frame;
-import model.Produto;
+import controller.ProdutoController;
+import model.Usuario;
 
 import javax.swing.JTextField;
-import java.text.NumberFormat;
-import java.util.List;
-import java.util.Locale;
 
 import javax.swing.JTable;
 
@@ -32,67 +36,17 @@ public class Carrinho extends JPanel {
 	private JTextField tfQtde;
 	private JTextField lblTotalAPagar;
 	private JTable table;
-	
-	private CarrinhoController carrinhoController;
-	
+	private CarrinhoController controllerCarrinho;
+	private ProdutoController controllerProduto;
+
+	private boolean atualizandoCampo = false;
+
 	private Frame frame;
-
-	NumberFormat formatoReal = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-	DefaultTableModel modelo = new DefaultTableModel(
-		    new Object[]{"IDProduto", "Produto", "Preço", "Qtde", "IDCarrinho"}, 0
-		) {
-		    @Override
-		    public boolean isCellEditable(int row, int column) {
-		        return false;
-		    }
-		};
-
-		private void atualizarTotal() {
-		    double total = 0.0;
-
-		    for (int i = 0; i < modelo.getRowCount(); i++) {
-		        double preco = (Double) modelo.getValueAt(i, 2);
-		        int qtde = (Integer) modelo.getValueAt(i, 3);
-
-		        total += preco * qtde;
-		    }
-
-		    lblTotalAPagar.setText(formatoReal.format(total));
-		}	
-		
-		private void atualizarTabela() {
-		    modelo.setRowCount(0);
-
-		    if (frame.getUsuarioLogado() == null) return;
-
-		    List<Object[]> itens = carrinhoController.listarItensDoCarrinhoComProduto(frame.getUsuarioLogado().getId());
-
-		    for (Object[] obj : itens) {
-		        model.Carrinho c = (model.Carrinho) obj[0];
-		        Produto p = (Produto) obj[1];
-
-		        modelo.addRow(new Object[]{
-		            p.getId(),
-		            p.getProduto(),
-		            c.getPreco(),
-		            c.getQtde(),
-		            c.getId()
-		        });
-		    }
-
-		    table.getColumnModel().getColumn(4).setMinWidth(0);
-		    table.getColumnModel().getColumn(4).setMaxWidth(0);
-		    table.getColumnModel().getColumn(4).setPreferredWidth(0);
-
-		    tfProduto.setText("");
-		    tfQtde.setText("");
-		    atualizarTotal();
-		}
-
-	public Carrinho(Frame frame, Compras compras) {
+	public Carrinho(Frame frame) {
 		
 		this.frame = frame;
-		this.carrinhoController = new CarrinhoController();
+		controllerCarrinho = new CarrinhoController();
+		controllerProduto = new ProdutoController();
 		
 		Color corFundo = new Color(0x25, 0x4D, 0x32);
 		Color verdeClaro = new Color(208, 219, 151);
@@ -102,27 +56,108 @@ public class Carrinho extends JPanel {
 		setPreferredSize(new Dimension(900, 600));
 		setLayout(null);
 		
-		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/voltar.png"));
-		JButton buttonVoltar = new JButton(icon);
-		buttonVoltar.setBounds(820, 530, 38, 40);
-		buttonVoltar.setBackground(corFundo);
-		buttonVoltar.setForeground(verdeClaro);
-		buttonVoltar.setOpaque(true);
-		buttonVoltar.setBorderPainted(false);
-		
-		buttonVoltar.addActionListener(e -> {
-		    frame.mostrarCompras();
-		});
-		
-		add(buttonVoltar);
-		
 		JLabel lblCarrinho = new JLabel("CARRINHO");
 		lblCarrinho.setVerticalAlignment(SwingConstants.TOP);
 		lblCarrinho.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCarrinho.setForeground(verdeClaro);
+		lblCarrinho.setForeground(new Color(208, 219, 151));
 		lblCarrinho.setFont(new Font("Arial", Font.BOLD, 30));
-		lblCarrinho.setBounds(37, 70, 353, 29);
+		lblCarrinho.setBounds(37, 55, 353, 29);
 		add(lblCarrinho);
+		
+		JLabel labelDeProdutos = new JLabel("DE PRODUTOS");
+		labelDeProdutos.setVerticalAlignment(SwingConstants.TOP);
+		labelDeProdutos.setHorizontalAlignment(SwingConstants.CENTER);
+		labelDeProdutos.setForeground(new Color(208, 219, 151));
+		labelDeProdutos.setFont(new Font("Arial", Font.BOLD, 30));
+		labelDeProdutos.setBounds(37, 85, 353, 29);
+		add(labelDeProdutos);
+		
+		JLabel lblProdutoTabela = new JLabel("PRODUTO");
+		lblProdutoTabela.setOpaque(true);
+		lblProdutoTabela.setHorizontalAlignment(SwingConstants.CENTER);
+		lblProdutoTabela.setForeground(new Color(37, 77, 50));
+		lblProdutoTabela.setFont(new Font("Arial", Font.BOLD, 18));
+		lblProdutoTabela.setBackground(new Color(208, 219, 151));
+		lblProdutoTabela.setBounds(40, 130, 120, 30);
+		add(lblProdutoTabela);
+		
+		JLabel lblPrecoTabela = new JLabel("PREÇO");
+		lblPrecoTabela.setOpaque(true);
+		lblPrecoTabela.setHorizontalAlignment(SwingConstants.CENTER);
+		lblPrecoTabela.setForeground(new Color(37, 77, 50));
+		lblPrecoTabela.setFont(new Font("Arial", Font.BOLD, 18));
+		lblPrecoTabela.setBackground(new Color(208, 219, 151));
+		lblPrecoTabela.setBounds(154, 130, 120, 30);
+		add(lblPrecoTabela);
+		
+		JLabel lblQtdeTabela = new JLabel("QTDE");
+		lblQtdeTabela.setOpaque(true);
+		lblQtdeTabela.setHorizontalAlignment(SwingConstants.CENTER);
+		lblQtdeTabela.setForeground(new Color(37, 77, 50));
+		lblQtdeTabela.setFont(new Font("Arial", Font.BOLD, 18));
+		lblQtdeTabela.setBackground(new Color(208, 219, 151));
+		lblQtdeTabela.setBounds(270, 130, 120, 30);
+		add(lblQtdeTabela);
+		
+		table = new JTable();
+		table.setRowHeight(30);
+		table.setForeground(new Color(37, 77, 50));
+		table.setFont(new Font("Arial", Font.BOLD, 18));
+		table.setBackground(new Color(122, 148, 101));
+		table.setBounds(40, 160, 350, 410);
+				
+		DefaultTableCellRenderer centralizado = new DefaultTableCellRenderer();
+		centralizado.setHorizontalAlignment(SwingConstants.CENTER);
+		table.setDefaultRenderer(Object.class, centralizado);
+		
+		String[] colunas = {"ID", "Produto", "Preço", "Qtde", "ID_PRODUTO"};
+		DefaultTableModel modelo = new DefaultTableModel(colunas, 0) {
+		    @Override
+		    public boolean isCellEditable(int row, int column) {
+		        return false;
+		    }
+		};
+		table.setModel(modelo);
+		
+		table.getSelectionModel().addListSelectionListener(event -> {
+		    if (!event.getValueIsAdjusting()) {
+		        int linha = table.getSelectedRow();
+		        if (linha != -1) {
+		            atualizarCamposComLinhaSelecionada(linha);
+		        } else {
+		            tfProduto.setText("");
+		            tfQtde.setText("");
+		            atualizarTotalCarrinho();
+		        }
+		    }
+		});
+		table.addMouseListener(new java.awt.event.MouseAdapter() {
+		    private int linhaSelecionadaAnterior = -1;
+
+		    @Override
+		    public void mouseClicked(java.awt.event.MouseEvent e) {
+		        int linhaAtual = table.rowAtPoint(e.getPoint());
+
+		        if (linhaAtual == linhaSelecionadaAnterior) {
+		            table.clearSelection();
+		            linhaSelecionadaAnterior = -1;
+		        } else {
+		            linhaSelecionadaAnterior = linhaAtual;
+		        }
+		    }
+		});
+
+		table.removeColumn(table.getColumnModel().getColumn(4));
+		table.removeColumn(table.getColumnModel().getColumn(0));
+		add(table);
+		
+		JLabel labelInformacoes = new JLabel("INFORMAÇÕES");
+		labelInformacoes.setVerticalAlignment(SwingConstants.BOTTOM);
+		labelInformacoes.setHorizontalAlignment(SwingConstants.LEFT);
+		labelInformacoes.setForeground(verdeClaro);
+		labelInformacoes.setFont(new Font("Arial", Font.BOLD, 22));
+		labelInformacoes.setBounds(450, 85, 408, 29);
+		add(labelInformacoes);
 		
 		JLabel lblProduto = new JLabel("PRODUTO");
 		lblProduto.setVerticalAlignment(SwingConstants.BOTTOM);
@@ -143,16 +178,15 @@ public class Carrinho extends JPanel {
 		tfProduto.setBounds(450, 160, 408, 50);
 		add(tfProduto);
 		
-		JLabel labelInformacoes = new JLabel("INFORMAÇÕES");
-		labelInformacoes.setVerticalAlignment(SwingConstants.BOTTOM);
-		labelInformacoes.setHorizontalAlignment(SwingConstants.LEFT);
-		labelInformacoes.setForeground(verdeClaro);
-		labelInformacoes.setFont(new Font("Arial", Font.BOLD, 22));
-		labelInformacoes.setBounds(450, 85, 408, 29);
-		add(labelInformacoes);
+		JLabel lblQtde = new JLabel("QUANTIDADE");
+		lblQtde.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblQtde.setHorizontalAlignment(SwingConstants.LEFT);
+		lblQtde.setForeground(new Color(208, 219, 151));
+		lblQtde.setFont(new Font("Arial", Font.BOLD, 16));
+		lblQtde.setBounds(450, 220, 408, 29);
+		add(lblQtde);
 		
 		tfQtde = new JTextField();
-		tfQtde.setEditable(false);
 		tfQtde.setToolTipText("QUANTIDADE");
 		tfQtde.setForeground(new Color(37, 77, 50));
 		tfQtde.setFont(new Font("Arial", Font.BOLD, 16));
@@ -160,7 +194,35 @@ public class Carrinho extends JPanel {
 		tfQtde.setBorder(new EmptyBorder(10, 10, 10, 10));
 		tfQtde.setBackground(verdeClaroTransparente);
 		tfQtde.setBounds(450, 250, 408, 50);
+		tfQtde.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		add(tfQtde);
+		
+		JLabel lblTotal = new JLabel("TOTAL A PAGAR (R$)");
+		lblTotal.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblTotal.setHorizontalAlignment(SwingConstants.LEFT);
+		lblTotal.setForeground(new Color(208, 219, 151));
+		lblTotal.setFont(new Font("Arial", Font.BOLD, 16));
+		lblTotal.setBounds(450, 400, 408, 29);
+		add(lblTotal);
 		
 		lblTotalAPagar = new JTextField();
 		lblTotalAPagar.setEditable(false);
@@ -173,125 +235,99 @@ public class Carrinho extends JPanel {
 		lblTotalAPagar.setBounds(450, 430, 408, 50);
 		add(lblTotalAPagar);
 		
-		JButton buttonExcluir = new JButton("EXCLUIR");
-		buttonExcluir.addActionListener(e -> {
+		JButton buttonSalvar = new JButton("SALVAR");
+		buttonSalvar.setOpaque(true);
+		buttonSalvar.setForeground(new Color(37, 77, 50));
+		buttonSalvar.setFont(new Font("Arial", Font.BOLD, 20));
+		buttonSalvar.setBorderPainted(false);
+		buttonSalvar.setBackground(new Color(208, 219, 151));
+		buttonSalvar.setBounds(708, 320, 150, 50);
+		
+		buttonSalvar.addActionListener(e -> {
 		    int linha = table.getSelectedRow();
-		    if (linha < 0) {
-		        JOptionPane.showMessageDialog(Carrinho.this, "Selecione um item para excluir!");
+		    if (linha == -1) {
+		        JOptionPane.showMessageDialog(this, "Selecione um produto para atualizar.");
 		        return;
 		    }
 
-		    int idCarrinho = (Integer) modelo.getValueAt(linha, 4);
-		    int idProduto = (Integer) modelo.getValueAt(linha, 0);
-		    int qtdeRemovida = (Integer) modelo.getValueAt(linha, 3);
+		    DefaultTableModel modelo1 = (DefaultTableModel) table.getModel();
+		    int idUsuario = frame.getUsuarioLogado().getId();
+		    int idProduto = Integer.parseInt(modelo1.getValueAt(linha, 4).toString());
+		    int qtdeAtualCarrinho = Integer.parseInt(modelo1.getValueAt(linha, 3).toString());
 
-		    if (carrinhoController.excluirItem(idCarrinho)) {
-		        if (compras != null) {
-		            compras.retornarEstoqueAoRemover(idProduto, qtdeRemovida);
+		    String qtdeStr = tfQtde.getText().trim();
+		    if (qtdeStr.isEmpty()) {
+		        JOptionPane.showMessageDialog(this, "Informe a nova quantidade.");
+		        return;
+		    }
+
+		    int novaQtde;
+		    try {
+		        novaQtde = Integer.parseInt(qtdeStr);
+		    } catch (NumberFormatException ex) {
+		        JOptionPane.showMessageDialog(this, "Digite um número válido.");
+		        return;
+		    }
+
+		    if (novaQtde <= 0) {
+		        JOptionPane.showMessageDialog(this, "A quantidade deve ser maior que 0.");
+		        return;
+		    }
+
+		    int diferenca = novaQtde - qtdeAtualCarrinho;
+
+		    List<model.Carrinho> entradas = controllerCarrinho.listarProdutos(idUsuario);
+		    boolean erro = false;
+		    int restante = Math.abs(diferenca);
+
+		    for (model.Carrinho c : entradas) {
+		        if (c.getIdProduto() != idProduto) continue;
+		        if (restante <= 0) break;
+
+		        int idCarrinho = c.getId();
+		        int qtde = c.getQtde();
+
+		        if (diferenca > 0) {
+		            boolean ok = controllerCarrinho.atualizarQuantidade(idCarrinho, qtde + restante);
+		            if (!ok) erro = true;
+		            break;
+		        } else if (diferenca < 0) {
+		            if (qtde > restante) {
+		                boolean ok = controllerCarrinho.atualizarQuantidade(idCarrinho, qtde - restante);
+		                if (!ok) erro = true;
+		                break;
+		            } else {
+		                boolean ok = controllerCarrinho.removerProduto(idCarrinho);
+		                if (!ok) erro = true;
+		                restante -= qtde;
+		            }
 		        }
-		        atualizarTabela();
-		        JOptionPane.showMessageDialog(Carrinho.this, "Item excluído!");
+		    }
+
+		    if (erro) {
+		        JOptionPane.showMessageDialog(this, "Erro ao atualizar o carrinho. Tente novamente.");
+		        return;
+		    }
+		    
+		    boolean sucessoEstoque;
+		    if (diferenca > 0) {
+		        sucessoEstoque = controllerProduto.removerEstoqueProduto(idProduto, diferenca);
+		    } else if (diferenca < 0) {
+		        sucessoEstoque = controllerProduto.adicionarEstoqueProduto(idProduto, Math.abs(diferenca));
 		    } else {
-		        JOptionPane.showMessageDialog(Carrinho.this, "Erro ao excluir o item!");
+		        sucessoEstoque = true;
 		    }
 
-		});
-
-		buttonExcluir.setOpaque(true);
-		buttonExcluir.setForeground(new Color(37, 77, 50));
-		buttonExcluir.setFont(new Font("Arial", Font.BOLD, 20));
-		buttonExcluir.setBorderPainted(false);
-		buttonExcluir.setBackground(new Color(208, 219, 151));
-		buttonExcluir.setBounds(708, 320, 150, 50);
-		
-		add(buttonExcluir);
-		
-		JLabel lblProdutoTabela = new JLabel("PRODUTO");
-		lblProdutoTabela.setOpaque(true);
-		lblProdutoTabela.setHorizontalAlignment(SwingConstants.CENTER);
-		lblProdutoTabela.setForeground(new Color(37, 77, 50));
-		lblProdutoTabela.setFont(new Font("Arial", Font.BOLD, 18));
-		lblProdutoTabela.setBackground(new Color(208, 219, 151));
-		lblProdutoTabela.setBounds(40, 130, 120, 30);
-		add(lblProdutoTabela);
-		
-		JLabel lblPrecoTabela = new JLabel("PREÇO");
-		lblPrecoTabela.setOpaque(true);
-		lblPrecoTabela.setHorizontalAlignment(SwingConstants.CENTER);
-		lblPrecoTabela.setForeground(new Color(37, 77, 50));
-		lblPrecoTabela.setFont(new Font("Arial", Font.BOLD, 18));
-		lblPrecoTabela.setBackground(new Color(208, 219, 151));
-		lblPrecoTabela.setBounds(154, 130, 120, 30);
-		add(lblPrecoTabela);
-		
-		table = new JTable();
-		table.setRowHeight(30);
-		table.setForeground(new Color(37, 77, 50));
-		table.setFont(new Font("Arial", Font.BOLD, 18));
-		table.setBackground(new Color(122, 148, 101));
-		table.setBounds(40, 160, 350, 410);
-		
-		table.setModel(modelo);
-		
-		DefaultTableCellRenderer centralizado = new DefaultTableCellRenderer();
-		centralizado.setHorizontalAlignment(SwingConstants.CENTER);
-
-		for (int i = 0; i < table.getColumnCount(); i++) {
-		    table.getColumnModel().getColumn(i).setCellRenderer(centralizado);
-		}
-		
-		table.getColumnModel().getColumn(0).setMinWidth(0);
-		table.getColumnModel().getColumn(0).setMaxWidth(0);
-		table.getColumnModel().getColumn(0).setPreferredWidth(0);
-		
-		table.getColumnModel().getColumn(4).setMinWidth(0);
-		table.getColumnModel().getColumn(4).setMaxWidth(0);
-		table.getColumnModel().getColumn(4).setPreferredWidth(0);
-
-
-		table.getSelectionModel().addListSelectionListener(e -> {
-		    if (!e.getValueIsAdjusting() && table.getSelectedRow() >= 0) {
-		        int linha = table.getSelectedRow();
-
-		        Object objProduto = table.getValueAt(linha, 1);
-		        Object objQtde = table.getValueAt(linha, 3); 
-		        
-		        tfProduto.setText(objProduto != null ? objProduto.toString() : "");
-		        tfQtde.setText(objQtde != null ? objQtde.toString() : "0");
+		    if (!sucessoEstoque) {
+		        JOptionPane.showMessageDialog(this, "Erro ao atualizar o estoque. Verifique o sistema.");
+		        return;
 		    }
+
+		    carregarCarrinho();
+		    JOptionPane.showMessageDialog(this, "Quantidade atualizada.");
 		});
 
-		add(table);
-		
-		if (frame.getUsuarioLogado() != null) {
-		    atualizarTabela();
-		}
-		
-		JLabel labelCadastro_1_1_1_1 = new JLabel("QUANTIDADE");
-		labelCadastro_1_1_1_1.setVerticalAlignment(SwingConstants.BOTTOM);
-		labelCadastro_1_1_1_1.setHorizontalAlignment(SwingConstants.LEFT);
-		labelCadastro_1_1_1_1.setForeground(new Color(208, 219, 151));
-		labelCadastro_1_1_1_1.setFont(new Font("Arial", Font.BOLD, 16));
-		labelCadastro_1_1_1_1.setBounds(450, 220, 408, 29);
-		add(labelCadastro_1_1_1_1);
-		
-		JLabel lblQtdeTabela = new JLabel("QTDE");
-		lblQtdeTabela.setOpaque(true);
-		lblQtdeTabela.setHorizontalAlignment(SwingConstants.CENTER);
-		lblQtdeTabela.setForeground(new Color(37, 77, 50));
-		lblQtdeTabela.setFont(new Font("Arial", Font.BOLD, 18));
-		lblQtdeTabela.setBackground(new Color(208, 219, 151));
-		lblQtdeTabela.setBounds(270, 130, 120, 30);
-
-		add(lblQtdeTabela);
-		
-		JLabel lblTotal = new JLabel("TOTAL A PAGAR (R$) / PRODUTO");
-		lblTotal.setVerticalAlignment(SwingConstants.BOTTOM);
-		lblTotal.setHorizontalAlignment(SwingConstants.LEFT);
-		lblTotal.setForeground(new Color(208, 219, 151));
-		lblTotal.setFont(new Font("Arial", Font.BOLD, 16));
-		lblTotal.setBounds(450, 400, 408, 29);
-		add(lblTotal);
+		add(buttonSalvar);
 		
 		JButton buttonCarrinho = new JButton(new ImageIcon(Carrinho.class.getResource("/icons/carrinho.png")));
 		buttonCarrinho.setOpaque(true);
@@ -309,33 +345,86 @@ public class Carrinho extends JPanel {
 		buttonNotaFiscal.setBackground(new Color(208, 219, 151));
 		buttonNotaFiscal.setBounds(450, 520, 180, 50);
 		buttonNotaFiscal.addActionListener(e -> {
-		    if (frame.getUsuarioLogado() == null) {
-		        JOptionPane.showMessageDialog(Carrinho.this, "Nenhum usuário logado!");
-		        return;
+		    Usuario usuario = frame.getUsuarioLogado();
+		    List<model.Carrinho> produtos = controllerCarrinho.listarProdutos(usuario.getId());
+
+		    new NotaFiscal(frame, usuario, produtos, controllerProduto);
+		    
+		    for (model.Carrinho c : produtos) {
+		        controllerCarrinho.removerProduto(c.getId());
 		    }
 
-		    int idUsuario = frame.getUsuarioLogado().getId();
-		    List<model.Carrinho> itensCarrinho = carrinhoController.listarCarrinhoPorUsuario(idUsuario);
-
-		    List<String> nota = carrinhoController.finalizarCompra(idUsuario, itensCarrinho);
-
-		    System.out.println("========== NOTA FISCAL ==========");
-		    System.out.println("Nome: " + frame.getUsuarioLogado().getNome());
-		    System.out.println("CPF: " + frame.getUsuarioLogado().getCpf());
-		    System.out.println("---------------------------------");
-		    for (String linha : nota) {
-		        System.out.println(linha);
-		    }
-
-		    modelo.setRowCount(0);
-		    tfProduto.setText("");
-		    tfQtde.setText("");
-		    lblTotalAPagar.setText("R$0,00");
-
-		    JOptionPane.showMessageDialog(Carrinho.this, "Compra concluída com sucesso!");
+		    carregarCarrinho();
 		});
-
 		add(buttonNotaFiscal);
+		
+		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/voltar.png"));
+		JButton buttonVoltar = new JButton(icon);
+		buttonVoltar.setBounds(820, 530, 38, 40);
+		buttonVoltar.setBackground(corFundo);
+		buttonVoltar.setForeground(verdeClaro);
+		buttonVoltar.setOpaque(true);
+		buttonVoltar.setBorderPainted(false);
+		
+		buttonVoltar.addActionListener(e -> {
+		    frame.mostrarCompras();
+		});
+		add(buttonVoltar);
+		
+		carregarCarrinho();
+	}
+	
+	private void carregarCarrinho() {
+	    int idUsuario = frame.getUsuarioLogado().getId();
+	    DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+	    modelo.setRowCount(0);
+
+	    Map<Integer, Object[]> mapa = new HashMap<>();
+
+	    controllerCarrinho.listarProdutos(idUsuario).forEach(c -> {
+	        if (mapa.containsKey(c.getIdProduto())) {
+	            Object[] item = mapa.get(c.getIdProduto());
+	            int qtdeAtual = (int) item[3];
+	            item[3] = qtdeAtual + c.getQtde();
+	        } else {
+	            String nomeProduto = controllerProduto.buscarProdutoPorId(c.getIdProduto()).getProduto();
+	            mapa.put(c.getIdProduto(), new Object[] {
+	            	    c.getId(), nomeProduto, c.getPreco(), c.getQtde(), c.getIdProduto()
+	            	});
+	        }
+	    });
+	    for (Object[] item : mapa.values()) {
+	        modelo.addRow(item);
+	    }
+	    atualizarTotalCarrinho();
+	}
+	
+	private void atualizarCamposComLinhaSelecionada(int linha) {
+	    atualizandoCampo = true;
+	    try {
+	        DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+	        String nomeProduto = modelo.getValueAt(linha, 1).toString();
+	        tfProduto.setText(nomeProduto);
+
+	        String qtde = modelo.getValueAt(linha, 3).toString();
+	        tfQtde.setText(qtde);
+
+	        double preco = Double.parseDouble(modelo.getValueAt(linha, 2).toString());
+	        lblTotalAPagar.setText(String.format("%.2f", preco * Integer.parseInt(qtde)));
+	    } finally {
+	        atualizandoCampo = false;
+	    }
+	}
+	
+	private void atualizarTotalCarrinho() {
+	    DefaultTableModel modelo = (DefaultTableModel) table.getModel();
+	    double total = 0.0;
+	    for (int i = 0; i < modelo.getRowCount(); i++) {
+	        double preco = Double.parseDouble(modelo.getValueAt(i, 2).toString());
+	        int qtde = Integer.parseInt(modelo.getValueAt(i, 3).toString());
+	        total += preco * qtde;
+	    }
+	    lblTotalAPagar.setText(String.format("%.2f", total));
 	}
 	
 	

@@ -12,76 +12,26 @@ import model.Produto;
 
 public class EditarProduto extends JDialog {
 
-    private JTextField campoNome;
-    private JTextField campoPreco;
-    private JTextField campoQtde;
-
-    private Produto produto;
-    private Runnable callbackAtualizarTabela;
+    private JTextField textFieldProduto;
+    private JTextField textFieldPreco;
+    private JTextField textFieldQtde;
     
+    private Produto produto;
     private ProdutoController controller;
 
-
-    public EditarProduto(JFrame parent, Produto produtoSelecionado, Runnable callbackAtualizar, ProdutoController controller) {
+    public EditarProduto(JFrame parent, Produto produto, ProdutoController controller) {
     	super(parent, "Editar Produto", true);
+        this.produto = produto;
         this.controller = controller;
-        this.produto = produtoSelecionado;
-        this.callbackAtualizarTabela = callbackAtualizar;
         
         Color corFundo = new Color(0x25, 0x4D, 0x32);
 		Color verdeClaro = new Color(208, 219, 151);
 		Color verdeClaroTransparente = new Color(122, 148, 101);
 		
         getContentPane().setBackground(corFundo);
-        this.produto = produtoSelecionado;
-        this.callbackAtualizarTabela = callbackAtualizar;
         setSize(500, 400);
         setLocationRelativeTo(parent);
-        
-        Font novaFonte = new Font("Arial", Font.BOLD, 18); 
-
-        campoNome = new JTextField(produto.getProduto());
-        campoNome.setFont(novaFonte);
-        campoNome.setForeground(corFundo);
-        campoNome.setBackground(verdeClaroTransparente);
-        campoNome.setBounds(100, 110, 300, 40);
-        campoNome.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        
-        campoPreco = new JTextField(String.valueOf(produto.getPreco()));
-        campoPreco.setFont(novaFonte);
-        campoPreco.setForeground(corFundo);
-        campoPreco.setBackground(verdeClaroTransparente);
-        campoPreco.setBounds(100, 180, 300, 40);
-        campoPreco.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        
-        campoQtde = new JTextField(String.valueOf(produto.getQtde()));
-        campoQtde.setFont(novaFonte);
-        campoQtde.setForeground(corFundo);
-        campoQtde.setBackground(verdeClaroTransparente);
-        campoQtde.setBounds(100, 250, 300, 40);
-        campoQtde.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        
         getContentPane().setLayout(null);
-        getContentPane().add(campoNome);
-        getContentPane().add(campoPreco);
-        getContentPane().add(campoQtde);
-        
-        JButton buttonSALVAR = new JButton("SALVAR");
-        buttonSALVAR.setOpaque(true);
-        buttonSALVAR.setForeground(new Color(37, 77, 50));
-        buttonSALVAR.setFont(new Font("Arial", Font.BOLD, 18));
-        buttonSALVAR.setBorderPainted(false);
-        buttonSALVAR.setBackground(new Color(208, 219, 151));
-        buttonSALVAR.setBounds(173, 305, 150, 40);
-        getContentPane().add(buttonSALVAR);
-        
-        JLabel labelCadastro_1_1 = new JLabel("PREÇO (R$)");
-        labelCadastro_1_1.setVerticalAlignment(SwingConstants.BOTTOM);
-        labelCadastro_1_1.setHorizontalAlignment(SwingConstants.LEFT);
-        labelCadastro_1_1.setForeground(new Color(208, 219, 151));
-        labelCadastro_1_1.setFont(new Font("Arial", Font.BOLD, 16));
-        labelCadastro_1_1.setBounds(100, 150, 220, 29);
-        getContentPane().add(labelCadastro_1_1);
         
         JLabel lblEditarProduto = new JLabel("EDITAR PRODUTO");
         lblEditarProduto.setVerticalAlignment(SwingConstants.TOP);
@@ -91,57 +41,76 @@ public class EditarProduto extends JDialog {
         lblEditarProduto.setBounds(100, 35, 300, 29);
         getContentPane().add(lblEditarProduto);
         
-        JLabel labelCadastro_1_1_1 = new JLabel("PRODUTO");
-        labelCadastro_1_1_1.setVerticalAlignment(SwingConstants.BOTTOM);
-        labelCadastro_1_1_1.setHorizontalAlignment(SwingConstants.LEFT);
-        labelCadastro_1_1_1.setForeground(new Color(208, 219, 151));
-        labelCadastro_1_1_1.setFont(new Font("Arial", Font.BOLD, 16));
-        labelCadastro_1_1_1.setBounds(100, 80, 220, 29);
-        getContentPane().add(labelCadastro_1_1_1);
+        JLabel lblProduto = new JLabel("PRODUTO");
+        lblProduto.setVerticalAlignment(SwingConstants.BOTTOM);
+        lblProduto.setHorizontalAlignment(SwingConstants.LEFT);
+        lblProduto.setForeground(new Color(208, 219, 151));
+        lblProduto.setFont(new Font("Arial", Font.BOLD, 16));
+        lblProduto.setBounds(75, 70, 220, 29);
+        getContentPane().add(lblProduto);
+
+        textFieldProduto = new JTextField(produto.getProduto());
+        textFieldProduto.setFont(new Font("Arial", Font.BOLD, 18));
+        textFieldProduto.setForeground(corFundo);
+        textFieldProduto.setBackground(verdeClaroTransparente);
+        textFieldProduto.setBounds(75, 100, 350, 40);
+        textFieldProduto.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        getContentPane().add(textFieldProduto);
         
-        JLabel labelCadastro_1_1_2 = new JLabel("QUANTIDADE");
-        labelCadastro_1_1_2.setVerticalAlignment(SwingConstants.BOTTOM);
-        labelCadastro_1_1_2.setHorizontalAlignment(SwingConstants.LEFT);
-        labelCadastro_1_1_2.setForeground(new Color(208, 219, 151));
-        labelCadastro_1_1_2.setFont(new Font("Arial", Font.BOLD, 16));
-        labelCadastro_1_1_2.setBounds(100, 220, 220, 29);
-        getContentPane().add(labelCadastro_1_1_2);
-        buttonSALVAR.addActionListener(new ActionListener() {
+        JLabel lblPreco = new JLabel("PREÇO (R$)");
+        lblPreco.setVerticalAlignment(SwingConstants.BOTTOM);
+        lblPreco.setHorizontalAlignment(SwingConstants.LEFT);
+        lblPreco.setForeground(new Color(208, 219, 151));
+        lblPreco.setFont(new Font("Arial", Font.BOLD, 16));
+        lblPreco.setBounds(75, 140, 220, 29);
+        getContentPane().add(lblPreco);
+        
+        textFieldPreco = new JTextField(String.valueOf(produto.getPreco()));
+        textFieldPreco.setFont(new Font("Arial", Font.BOLD, 18));
+        textFieldPreco.setForeground(corFundo);
+        textFieldPreco.setBackground(verdeClaroTransparente);
+        textFieldPreco.setBounds(75, 170, 350, 40);
+        textFieldPreco.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        getContentPane().add(textFieldPreco);
+        
+        JLabel lblQtde = new JLabel("QUANTIDADE");
+        lblQtde.setVerticalAlignment(SwingConstants.BOTTOM);
+        lblQtde.setHorizontalAlignment(SwingConstants.LEFT);
+        lblQtde.setForeground(new Color(208, 219, 151));
+        lblQtde.setFont(new Font("Arial", Font.BOLD, 16));
+        lblQtde.setBounds(75, 210, 220, 29);
+        getContentPane().add(lblQtde);
+        
+        textFieldQtde = new JTextField(String.valueOf(produto.getQtde()));
+        textFieldQtde.setFont(new Font("Arial", Font.BOLD, 18));
+        textFieldQtde.setForeground(corFundo);
+        textFieldQtde.setBackground(verdeClaroTransparente);
+        textFieldQtde.setBounds(75, 240, 350, 40);
+        textFieldQtde.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        getContentPane().add(textFieldQtde);
+        
+        JButton buttonSalvar = new JButton("SALVAR");
+        buttonSalvar.setOpaque(true);
+        buttonSalvar.setForeground(new Color(37, 77, 50));
+        buttonSalvar.setFont(new Font("Arial", Font.BOLD, 18));
+        buttonSalvar.setBorderPainted(false);
+        buttonSalvar.setBackground(new Color(208, 219, 151));
+        buttonSalvar.setBounds(173, 300, 150, 40);
+        
+        buttonSalvar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                salvarEdicao();
+            	String nome = textFieldProduto.getText().trim();
+                double preco = Double.parseDouble(textFieldPreco.getText().trim());
+                int qtde = Integer.parseInt(textFieldQtde.getText().trim());
+
+                if(controller.atualizarProduto(produto.getId(), nome, preco, qtde)) {
+                    JOptionPane.showMessageDialog(EditarProduto.this, "Produto atualizado com sucesso.");
+                    EditarProduto.this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(EditarProduto.this, "Erro ao atualizar produto.");
+                }
             }
         });
-    }
-
-    private void salvarEdicao() {
-        String nome = campoNome.getText().trim();
-        String precoStr = campoPreco.getText().trim().replace(",", ".");
-        String qtdeStr = campoQtde.getText().trim();
-
-        if (nome.isEmpty() || precoStr.isEmpty() || qtdeStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Preencha todos os campos.");
-            return;
-        }
-
-        try {
-            double preco = Double.parseDouble(precoStr);
-            int qtde = Integer.parseInt(qtdeStr);
-
-            produto.setProduto(nome);
-            produto.setPreco(preco);
-            produto.setQtde(qtde);
-
-            if (controller.atualizarProduto(produto)) {
-                JOptionPane.showMessageDialog(this, "Produto atualizado!");
-                callbackAtualizarTabela.run();
-                dispose();
-            } else {
-                JOptionPane.showMessageDialog(this, "Erro ao atualizar produto.");
-            }
-
-
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Preço ou quantidade inválidos.");
-        }
+        getContentPane().add(buttonSalvar);
     }
 }

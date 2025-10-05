@@ -50,14 +50,13 @@ public class Cadastro extends JPanel {
 		labelCadastro.setHorizontalAlignment(SwingConstants.CENTER);
 		add(labelCadastro);
 		
-		JButton buttonCadastrar = new JButton("CADASTRAR");
-		buttonCadastrar.setFont(new Font("Arial", Font.BOLD, 20));
-		buttonCadastrar.setBounds(350, 454, 200, 50);
-		buttonCadastrar.setBackground(verdeClaro);
-		buttonCadastrar.setForeground(corFundo); 
-		buttonCadastrar.setOpaque(true);
-		buttonCadastrar.setBorderPainted(false);
-		add(buttonCadastrar);
+		JLabel lblNome = new JLabel("NOME");
+		lblNome.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblNome.setHorizontalAlignment(SwingConstants.LEFT);
+		lblNome.setForeground(new Color(208, 219, 151));
+		lblNome.setFont(new Font("Arial", Font.BOLD, 16));
+		lblNome.setBounds(200, 165, 59, 26);
+		add(lblNome);
 		
 		textFieldNome = new JTextField();
 		textFieldNome.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -68,6 +67,14 @@ public class Cadastro extends JPanel {
 		textFieldNome.setBounds(200, 194, 500, 50);
 		add(textFieldNome);
 		textFieldNome.setColumns(10);
+		
+		JLabel lblCpf = new JLabel("CPF");
+		lblCpf.setVerticalAlignment(SwingConstants.BOTTOM);
+		lblCpf.setHorizontalAlignment(SwingConstants.LEFT);
+		lblCpf.setForeground(new Color(208, 219, 151));
+		lblCpf.setFont(new Font("Arial", Font.BOLD, 16));
+		lblCpf.setBounds(200, 245, 59, 26);
+		add(lblCpf);
 		
 		try {
 			MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
@@ -93,17 +100,13 @@ public class Cadastro extends JPanel {
 		radioButtonAdm.setBounds(200, 356, 500, 50);
 		add(radioButtonAdm);
 		
-		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/voltar.png"));
-		JButton buttonVoltar = new JButton(icon);
-		buttonVoltar.setBounds(820, 530, 38, 40);
-		buttonVoltar.setBackground(corFundo);
-		buttonVoltar.setForeground(verdeClaro);
-		buttonVoltar.setOpaque(true);
-		buttonVoltar.setBorderPainted(false);
-		
-		buttonVoltar.addActionListener(e -> {
-		    frame.mostrarInicio();
-		});
+		JButton buttonCadastrar = new JButton("CADASTRAR");
+		buttonCadastrar.setFont(new Font("Arial", Font.BOLD, 20));
+		buttonCadastrar.setBounds(350, 454, 200, 50);
+		buttonCadastrar.setBackground(verdeClaro);
+		buttonCadastrar.setForeground(corFundo); 
+		buttonCadastrar.setOpaque(true);
+		buttonCadastrar.setBorderPainted(false);
 		
 		buttonCadastrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -130,23 +133,20 @@ public class Cadastro extends JPanel {
 				}
 			}
 		});
+		add(buttonCadastrar);
 		
+		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/voltar.png"));
+		JButton buttonVoltar = new JButton(icon);
+		buttonVoltar.setBounds(820, 530, 38, 40);
+		buttonVoltar.setBackground(corFundo);
+		buttonVoltar.setForeground(verdeClaro);
+		buttonVoltar.setOpaque(true);
+		buttonVoltar.setBorderPainted(false);
+		
+		buttonVoltar.addActionListener(e -> {
+		    frame.mostrarInicio();
+		});
 		add(buttonVoltar);
-		
-		JLabel lblNome = new JLabel("NOME");
-		lblNome.setVerticalAlignment(SwingConstants.BOTTOM);
-		lblNome.setHorizontalAlignment(SwingConstants.LEFT);
-		lblNome.setForeground(new Color(208, 219, 151));
-		lblNome.setFont(new Font("Arial", Font.BOLD, 16));
-		lblNome.setBounds(200, 165, 59, 26);
-		add(lblNome);
-		
-		JLabel lblCpf = new JLabel("CPF");
-		lblCpf.setVerticalAlignment(SwingConstants.BOTTOM);
-		lblCpf.setHorizontalAlignment(SwingConstants.LEFT);
-		lblCpf.setForeground(new Color(208, 219, 151));
-		lblCpf.setFont(new Font("Arial", Font.BOLD, 16));
-		lblCpf.setBounds(200, 245, 59, 26);
-		add(lblCpf);
+	
 	}
 }
